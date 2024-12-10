@@ -46,6 +46,7 @@
    
    |calc
       @1
+         $reset = *reset;
          $val2[7:0] = {4'b0, *ui_in[3:0]};
          $op[1:0] = *ui_in[5:4];
          $equals_in = *ui_in[7];
