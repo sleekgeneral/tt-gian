@@ -1,36 +1,37 @@
 \m5_TLV_version 1d: tl-x.org
 \m5
    use(m5-1.0)
-   
+
 
    // #################################################################
    // #                                                               #
    // #  Starting-Point Code for MEST Course Tiny Tapeout Calculator  #
    // #                                                               #
    // #################################################################
-   
+
    // ========
    // Settings
    // ========
-   
+
    //-------------------------------------------------------
    // Build Target Configuration
    //
    var(my_design, tt_um_example)   /// The name of your top-level TT module, to match your info.yml.
    var(target, ASIC)   /// Note, the FPGA CI flow will set this to FPGA.
    //-------------------------------------------------------
-   
+
    var(in_fpga, 1)   /// 1 to include the demo board. (Note: Logic will be under /fpga_pins/fpga.)
+   var(debounce_inputs, 0)
    var(debounce_inputs, 1)
                      /// Legal values:
                      ///   1: Provide synchronization and debouncing on all input signals.
                      ///   0: Don't provide synchronization and debouncing.
                      ///   m5_if_defined_as(MAKERCHIP, 1, 0, 1): Debounce unless in Makerchip.
-   
+
    // ======================
    // Computed From Settings
    // ======================
-   
+
    // If debouncing, a user's module is within a wrapper, so it has a different name.
    var(user_module_name, m5_if(m5_debounce_inputs, my_design, m5_my_design))
    var(debounce_cnt, m5_if_defined_as(MAKERCHIP, 1, 8'h03, 8'hff))
@@ -42,10 +43,11 @@
    m4_include_lib(https:/['']/raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/calculator_shell_lib.tlv)
 
 \TLV calc()
-   
-   
+
+
    |calc
-      @1 $reset = *reset;
+      @1
+         $reset = *reset;
          $val2[7:0] = {4'b0, *ui_in[3:0]};
          $op[1:0] = *ui_in[5:4];
          $equals_in = *ui_in[7];
@@ -98,25 +100,22 @@
              ? 8'b01011110 :
              $digit[3:0] == 4'b1110
              ? 8'b01111001 : 8'b01110001 ;
-      
+
    // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
-   
-   
+
+
 
    m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
-   
+
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
-   
+
    m5_if_neq(m5_target, FPGA, ['*uio_out = 8'b0;'])
    m5_if_neq(m5_target, FPGA, ['*uio_oe = 8'b0;'])
-
 \SV
-
 // ================================================
 // A simple Makerchip Verilog test bench driving random stimulus.
 // Modify the module contents to your needs.
 // ================================================
-
 module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, output logic passed, output logic failed);
    // Tiny tapeout I/O signals.
    logic [7:0] ui_in, uo_out;
@@ -127,10 +126,10 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    m5_if_neq(m5_target, FPGA, ['assign uio_in = 8'b0;'])
    logic ena = 1'b0;
    logic rst_n = ! reset;
-   
+
    // Instantiate the Tiny Tapeout module.
    m5_user_module_name tt(.*);
-   
+
    assign passed = top.cyc_cnt > 80;
    assign failed = 1'b0;
 endmodule
