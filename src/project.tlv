@@ -50,14 +50,14 @@
          $reset = *reset;
          $val2[7:0] = {4'b0, *ui_in[3:0]};
          $op[1:0] = *ui_in[5:4];
-         $equals_in = *ui_in[7];
-      //@1
-         $val1[7:0] = >>1$out[7:0];
+         $equals_in = *ui_in[7];   
+         $val1[7:0] = >>2$out[7:0];
          $sum[7:0] = $val1[7:0] + $val2[7:0];
          $diff[7:0] = $val1[7:0] - $val2[7:0];
          $mul[7:0] = $val1[7:0] * $val2[7:0];
          $div[7:0] = $val1[7:0] / $val2[7:0];
          $valid = $equals_in && !(>>1$equals_in);
+      @2   
          $out[7:0] = $reset
                         ? 8'b0 :
                      !($valid)
@@ -70,6 +70,7 @@
                         ? $mul[7:0] :
                      $div[7:0];
          $digit[3:0] = $out[3:0];
+      @3
          *uo_out[7:0] = $digit[3:0] == 4'b0000
              ? 8'b00111111 :
              $digit[3:0] == 4'b0001
@@ -105,7 +106,7 @@
 
 
 
-   m5+cal_viz(@1, m5_if(m5_in_fpga, /fpga, /top))
+   m5+cal_viz(@2, m5_if(m5_in_fpga, /fpga, /top))
 
    // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
 
