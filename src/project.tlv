@@ -73,15 +73,15 @@
    // (Connect Tiny Tapeout outputs at the end of this template.)
    // ============================================
    
-   /*|prog
+   |prog
       @1
-         $prog = *ui_in[7];
-         $reset_prog = reset || !$prog;/
+         //$prog = *ui_in[7];
+         //$reset = *reset;
    
    |lipsi
       @1
-         //$run = !*ui_in[7];
-         $reset_lipsi = *reset;
+         $run = 1'b0;//!*ui_in[7];
+         $reset_lipsi = *reset || $run;
          
          //---------------------MEMORY - INITIALIZATION---------------
          $imem_rd_addr[4:0] = $pc[4:0];
@@ -133,7 +133,7 @@
                     ?{6'b1111_11 ,$instr[1:0]}:
                  $is_ret
                     ?{6'b1111_11 ,$instr[3:2]}:
-                 >>1$is_ld_ind  || >>1$is_st_ind
+                 >>1$is_ld_ind  || >>1$is_st_ind 
                     ? >>1$data:
                     >>1$dptr;
          
@@ -147,35 +147,35 @@
          $is_ALU = >>1$is_ALU_imm || $is_ALU_reg;
          
          /* verilator lint_off WIDTHEXPAND */
-         {$c,$acc[7:0]} = $is_ALU && $func == 3'b000 
-                           ? >>1$acc + $op[7:0] :
-                        $is_ALU && $func == 3'b000 
-                           ? >>1$acc + $op[7:0] :
-                        $is_ALU && $func == 3'b001 
-                           ? >>1$acc - $op[7:0] :
-                        $is_ALU && $func == 3'b010 
-                           ? >>1$acc + $op[7:0] + >>1$c :
-                        $is_ALU && $func == 3'b011  
-                           ? >>1$acc - $op[7:0] - >>1$c :
-                        $is_ALU && $func == 3'b100 
-                           ? >>1$acc & $op[7:0] :
-                        $is_ALU && $func == 3'b101 
-                           ? >>1$acc | $op[7:0]:
-                        $is_ALU && $func == 3'b110 
-                           ? >>1$acc ^ $op[7:0] :
-                        $is_ALU && $func == 3'b111 
-                           ? $op[7:0]:
-                        $is_sh && $instr[1:0] == 2'b00
-                           ? {>>1$acc[7:0],>>1$c}:
-                        $is_sh && $instr[1:0] == 2'b01
-                           ? {>>1$acc[0],>>1$c,>>1$acc[7:1]}:
-                        $is_sh && $instr[1:0] == 2'b10
-                           ? {>>1$c,>>1$acc[6:0],>>1$acc[7]}:
-                        $is_sh && $instr[1:0] == 2'b11
-                           ? {>>1$c,>>1$acc[0],>>1$acc[7:1]}:
-                        >>1$is_ld_ind
-                           ? $data:
-                         {>>1$c,>>1$acc[7:0]};
+         {$c,$acc[7:0]} =  $is_ALU && $func == 3'b000
+                              ? >>1$acc + $op[7:0] :
+                           $is_ALU && $func == 3'b000
+                              ? >>1$acc + $op[7:0] :
+                           $is_ALU && $func == 3'b001
+                              ? >>1$acc - $op[7:0] :
+                              $is_ALU && $func == 3'b010
+                              ? >>1$acc + $op[7:0] + >>1$c :
+                           $is_ALU && $func == 3'b011
+                              ? >>1$acc - $op[7:0] - >>1$c :
+                           $is_ALU && $func == 3'b100
+                              ? {>>1$c, >>1$acc & $op[7:0]} :
+                           $is_ALU && $func == 3'b101
+                              ? {>>1$c, >>1$acc | $op[7:0]}:
+                           $is_ALU && $func == 3'b110
+                              ? {>>1$c, >>1$acc ^ $op[7:0]} :
+                           $is_ALU && $func == 3'b111
+                              ? {>>1$c, $op[7:0]}:
+                           $is_sh && $instr[1:0] == 2'b00
+                              ? {>>1$acc[7:0],>>1$c}:
+                           $is_sh && $instr[1:0] == 2'b01
+                              ? {>>1$acc[0],>>1$c,>>1$acc[7:1]}:
+                           $is_sh && $instr[1:0] == 2'b10
+                              ? {>>1$c,>>1$acc[6:0],>>1$acc[7]}:
+                           $is_sh && $instr[1:0] == 2'b11
+                              ? {>>1$c,>>1$acc[0],>>1$acc[7:1]}:
+                           >>1$is_ld_ind
+                              ? {>>1$c,$data}:
+                                {>>1$c,>>1$acc[7:0]};
          
          /* verilator lint_on WIDTHEXPAND */
          $z = $acc == 8'b0;
@@ -184,7 +184,7 @@
          $data_wr[7:0] = !$wr_en ? >>1$data_wr:
                          !$is_brl ? $acc:
                          $pc;
-         /*$digit[3:0] = *ui_in[0]? $acc[7:4] : $acc[3:0];
+         $digit[3:0] = *ui_in[0]? $acc[7:4] : $acc[3:0];
          *uo_out[7:0] = $digit[3:0] == 4'b0000
              ? 8'b00111111 :
              $digit[3:0] == 4'b0001
@@ -214,7 +214,7 @@
              $digit[3:0] == 4'b1101
              ? 8'b01011110 :
              $digit[3:0] == 4'b1110
-             ? 8'b01111001 : 8'b01110001 ;*/
+             ? 8'b01111001 : 8'b01110001 ;
          
          
       m5+imem(@1)
