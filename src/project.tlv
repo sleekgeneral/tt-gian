@@ -148,7 +148,7 @@
          
          /* verilator lint_off WIDTHEXPAND */
          {$c,$acc[7:0]} = $is_ALU && $func == 3'b000
-                             ? >>1$acc + $op[7:0] :
+                              ? >>1$acc + $op[7:0] :
                            $is_ALU && $func == 3'b000
                               ? >>1$acc + $op[7:0] :
                            $is_ALU && $func == 3'b001
