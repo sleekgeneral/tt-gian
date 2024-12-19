@@ -97,7 +97,7 @@
          $is_ld_ind = $instr[7:4] == 4'b1010 && $valid;
          $is_st_ind = $instr[7:4] == 4'b1011 && $valid;
          $is_sh = $instr[7:4] == 4'b1110 && $valid;
-         $is_io = $instr[7:4] == 4'b1111 && $instr[7:0]!=8'b1111_1111 && $valid;
+         //$is_io = $instr[7:4] == 4'b1111 && $instr[7:0]!=8'b1111_1111 && $valid;
          $exit = $instr[7:0] == 8'b1111_1111 && $valid;
          $is_ALU_imm = $instr[7:4] == 4'b1100 && $valid;
          $is_br = {$instr[7:4], $instr[1:0]} == 6'b1101_00 && $valid;
