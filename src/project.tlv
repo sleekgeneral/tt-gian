@@ -147,35 +147,35 @@
          $is_ALU = >>1$is_ALU_imm || $is_ALU_reg;
          
          /* verilator lint_off WIDTHEXPAND */
-         {$c,$acc[7:0]} = $is_ALU && $func == 3'b000
-                              ? >>1$acc + $op[7:0] :
-                           $is_ALU && $func == 3'b000
-                              ? >>1$acc + $op[7:0] :
-                           $is_ALU && $func == 3'b001
-                              ? >>1$acc - $op[7:0] :
-                           $is_ALU && $func == 3'b010
-                              ? >>1$acc + $op[7:0] + >>1$c :
-                           $is_ALU && $func == 3'b011
-                              ? >>1$acc - $op[7:0] - >>1$c :
-                           $is_ALU && $func == 3'b100
-                              ? {>>1$c, >>1$acc & $op[7:0]} :
-                           $is_ALU && $func == 3'b101
-                              ? {>>1$c, >>1$acc | $op[7:0]}:
-                           $is_ALU && $func == 3'b110
-                              ? {>>1$c, >>1$acc ^ $op[7:0]} :
-                           $is_ALU && $func == 3'b111
-                              ? {>>1$c, $op[7:0]}:
-                           $is_sh && $instr[1:0] == 2'b00
-                              ? {>>1$acc[7:0],>>1$c}:
-                           $is_sh && $instr[1:0] == 2'b01
-                              ? {>>1$acc[0],>>1$c,>>1$acc[7:1]}:
-                           $is_sh && $instr[1:0] == 2'b10
-                              ? {>>1$c,>>1$acc[6:0],>>1$acc[7]}:
-                           $is_sh && $instr[1:0] == 2'b11
-                              ? {>>1$c,>>1$acc[0],>>1$acc[7:1]}:
-                           >>1$is_ld_ind
-                              ? {>>1$c,$data}:
-                            {>>1$c,>>1$acc[7:0]};
+         {$c,$acc[7:0]} = $is_ALU && $func == 3'b000 
+                           ? >>1$acc + $op[7:0] :
+                        $is_ALU && $func == 3'b000 
+                           ? >>1$acc + $op[7:0] :
+                        $is_ALU && $func == 3'b001 
+                           ? >>1$acc - $op[7:0] :
+                        $is_ALU && $func == 3'b010 
+                           ? >>1$acc + $op[7:0] + >>1$c :
+                        $is_ALU && $func == 3'b011  
+                           ? >>1$acc - $op[7:0] - >>1$c :
+                        $is_ALU && $func == 3'b100 
+                           ? >>1$acc & $op[7:0] :
+                        $is_ALU && $func == 3'b101 
+                           ? >>1$acc | $op[7:0]:
+                        $is_ALU && $func == 3'b110 
+                           ? >>1$acc ^ $op[7:0] :
+                        $is_ALU && $func == 3'b111 
+                           ? $op[7:0]:
+                        $is_sh && $instr[1:0] == 2'b00
+                           ? {>>1$acc[7:0],>>1$c}:
+                        $is_sh && $instr[1:0] == 2'b01
+                           ? {>>1$acc[0],>>1$c,>>1$acc[7:1]}:
+                        $is_sh && $instr[1:0] == 2'b10
+                           ? {>>1$c,>>1$acc[6:0],>>1$acc[7]}:
+                        $is_sh && $instr[1:0] == 2'b11
+                           ? {>>1$c,>>1$acc[0],>>1$acc[7:1]}:
+                        >>1$is_ld_ind
+                           ? $data:
+                         {>>1$c,>>1$acc[7:0]};
          
          /* verilator lint_on WIDTHEXPAND */
          $z = $acc == 8'b0;
