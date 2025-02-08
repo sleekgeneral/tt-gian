@@ -9,7 +9,7 @@
 
    use(m5-1.0)  // See M5 docs in Makerchip IDE Learn menu.
 
-   // ---SETTINGS---
+   // ---SETTINGS--- 
    var(my_design, tt_um_example)  /// Change tt_um_example to tt_um_<your-github-username>_<name-of-your-project>. (See README.md.)
    var(debounce_inputs, 0)
                      /// Legal values:
